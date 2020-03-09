@@ -9,7 +9,7 @@
         <div class="card-body">
             <div class="tab-content" id="myTabContent">
                 <div aria-labelledby="home-tab" class="tab-pane fade show active" id="home" role="tabpanel">
-                    <form enctype="multipart/form-data" action="{{url_for('cadastro_admin')}}">
+                    <form enctype="multipart/form-data" action="{{url_for('admin')}}" method="post">
                         <fieldset>
                             <fieldset>
                                 <legend>Dados do administrador</legend>
@@ -37,7 +37,7 @@
                                         </div>
                                         <div class="col-xl-2">
                                             <label for="rf">RF</label>
-                                            <input class="form-control" id="rf" name="rf" type="number" required>
+                                            <input class="form-control" id="rf" name="rf" type="text" required>
                                         </div>
                                     </div>
                                 </div>
@@ -52,7 +52,7 @@
                                         </div>
                                         <div class="col-xl-2">
                                             <label for="senha">Senha</label>
-                                            <input class="form-control" id="senha" name="senha" type="text" required>
+                                            <input class="form-control" id="senha" name="senha" type="password" required>
                                         </div>
                                     </div>
                                 </div>

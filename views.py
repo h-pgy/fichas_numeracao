@@ -1,7 +1,8 @@
 from flask import request, render_template, flash, send_from_directory, redirect, url_for, session
 import os
-from helpers import clean_dup_list, validar_AD
+from helpers import clean_dup_list, validar_AD, log_as_admin
 from app import app
+import json
 
 @app.route('/')
 def login():
@@ -35,9 +36,20 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+#--------------------------------------------------------------------------------------------------------------------
 @app.route('/cadastro-admin')
 def cadastro_admin():
+    log_as_admin()
     return render_template('cadastroAdmin.html', titulo="Cadastro de administrador do sistema")
+
+@app.route('/admin', methods=['POST',])
+def admin():
+    form_data = request.form
+    with open('administrador.json', 'w') as f:
+        json.dump(form_data, f)
+    flash('Administrador cadastrado com sucesso!')
+
+    return redirect(url_for('index'))
 
 # -------------------------------------------------------------------------------------------------------------------
 @app.route('/fichas')
@@ -51,7 +63,8 @@ def search_fichas():
 
     path = r"\\nas.prodam\SL0104_Fichas_Numeracao"
     # path = r"C:\Users\x369482\Desktop\DLE_Fichas_renomeadas"
-
+    user = log_as_admin()
+    user.logon()
     main_folder_files = os.listdir(path)
     result_list = list()
     inside_files_list = list()
@@ -77,6 +90,8 @@ def search_fichas():
                     inside_files_list.append(item_dict)
         inside_files_list.append(pdf_dict)
     unique_list = clean_dup_list(inside_files_list)
+
+    user.logoff()
 
     return render_template('fichasList.html', titulo='Fichas de Numeração', path=path,
                            inside_files_list=unique_list)

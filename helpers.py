@@ -1,5 +1,6 @@
 import json
 import requests
+from impersonator import Impersonate
 
 # refaz a lista para tirar itens que estao repetidos> função futura
 def clean_dup_list(list_dup_items):
@@ -21,3 +22,15 @@ def validar_AD(user, passw):
         json_resp = f.text
 
     return json.loads(json_resp)
+
+def log_as_admin(admin_file = 'administrador.json'):
+
+    with open(admin_file) as f:
+        admin = json.load(f)
+
+    usuario = admin['usuario']
+    senha = admin['senha']
+
+    user = Impersonate(usuario, senha)
+
+    return user
