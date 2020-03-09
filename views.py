@@ -1,15 +1,49 @@
-from flask import request, render_template, flash, send_from_directory
+from flask import request, render_template, flash, send_from_directory, redirect, url_for, session
 import os
-from helpers import clean_dup_list
+from helpers import clean_dup_list, validar_AD
 from app import app
 
-
 @app.route('/')
+def login():
+    return render_template('login.html')
+
+@app.route('/authenticate', methods=['POST', ])
+def authenticate():
+    login = request.form['user']
+    passw = request.form['passw']
+
+    super_admin = 'superadministrador'
+    senha_super_admin = 'Prodam'
+
+    validacao_ad = validar_AD(login, passw)
+
+    if login == super_admin and passw == senha_super_admin:
+        return redirect(url_for('cadastro_admin'))
+    else:
+        if validacao_ad:
+            session['logged_user'] = login
+            session.permanent = True
+            flash('Bem vindo(a)!')
+            next = request.form['next']
+            return redirect(next)
+        else:
+            flash('Nao foi possivel fazer login')
+            return redirect(url_for('login'))
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+@app.route('/cadastro-admin')
+def cadastro_admin():
+    return render_template('cadastroAdmin.html', titulo="Cadastro de administrador do sistema")
+
+# -------------------------------------------------------------------------------------------------------------------
+@app.route('/fichas')
 def index():
     return render_template('fichasSearch.html', titulo='Fichas de Numeração')
 
-
-# -------------------------------------------------------------------------------------------------------------------
 @app.route('/search_fichas', methods=['POST', ])
 def search_fichas():
     flash('Para documentos com extensão .tif confira a pasta de download!')
