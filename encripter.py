@@ -3,6 +3,9 @@ from cryptography.exceptions import InvalidSignature
 
 CRYPT_KEY = Fernet.generate_key()
 
+class ChaveInvalida(RuntimeError):
+    '''Raised quando a chave de assinatura da criptografia mudou'''
+
 class Crypt:
 
     @staticmethod
@@ -20,5 +23,5 @@ class Crypt:
 
             return plain_text
         except InvalidSignature:
-            raise RuntimeError('Chave de criptografia mudou - Necessario recadastrar administrador!')
+            raise ChaveInvalida('Chave de criptografia inválida - Recadastrar o Administrador')
 
