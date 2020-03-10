@@ -14,6 +14,7 @@ class Crypt:
     @staticmethod
     def decrypt(cipher_text):
 
+        cipher_suite = Fernet(CRYPT_KEY)
         plain_text = cipher_suite.decrypt(cipher_text).decode('utf-8')
 
         return plain_text
