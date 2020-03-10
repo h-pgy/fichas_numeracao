@@ -1,6 +1,7 @@
 import json
 import requests
 from impersonator import Impersonate
+from encripter import Crypt
 
 # refaz a lista para tirar itens que estao repetidos> função futura
 def clean_dup_list(list_dup_items):
@@ -30,6 +31,8 @@ def log_as_admin(admin_file = 'administrador.json'):
 
     usuario = admin['usuario']
     senha = admin['senha']
+    senha = Crypt.decrypt(senha)
+
 
     user = Impersonate(usuario, senha)
 
