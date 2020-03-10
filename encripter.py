@@ -1,5 +1,5 @@
 from cryptography.fernet import Fernet
-from cryptography.exceptions import InvalidSignature
+from cryptography.fernet import InvalidToken
 
 CRYPT_KEY = Fernet.generate_key()
 
@@ -22,6 +22,6 @@ class Crypt:
             plain_text = cipher_suite.decrypt(cipher_text).decode('utf-8')
 
             return plain_text
-        except InvalidSignature:
+        except InvalidToken:
             raise ChaveInvalida('Chave de criptografia inválida - Recadastrar o Administrador')
 

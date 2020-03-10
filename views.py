@@ -15,7 +15,7 @@ def authenticate():
     passw = request.form['passw']
 
     super_admin = 'superadministrador'
-    senha_super_admin = 'Prodam'
+    senha_super_admin = 'Agil'
 
 
     if login == super_admin and passw == senha_super_admin:
