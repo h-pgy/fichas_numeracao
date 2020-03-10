@@ -27,7 +27,7 @@ def log_as_admin(admin_file = 'administrador.json'):
         admin = json.load(f)
 
     usuario = admin['usuario']
-    senha = admin['senha']
+    senha = admin['senha'].encode('utf-8')
     senha = Crypt.decrypt(senha)
 
 

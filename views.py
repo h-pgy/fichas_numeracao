@@ -45,9 +45,10 @@ def cadastro_admin():
 @app.route('/admin', methods=['POST',])
 def admin():
     form_data = request.form
-    form_data['senha'] = Crypt.encrypt(form_data['senha'])
+    dados_admin = dict(request.form)
+    dados_admin['senha'] = Crypt.encrypt(form_data['senha']).decode('utf-8')
     with open('administrador.json', 'w') as f:
-        json.dump(form_data, f)
+        json.dump(dados_admin, f)
     flash('Administrador cadastrado com sucesso!')
     log_as_admin()
 
