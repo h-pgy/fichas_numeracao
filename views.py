@@ -3,6 +3,7 @@ import os
 from helpers import clean_dup_list, validar_AD, log_as_admin
 from app import app
 import json
+from encripter import Crypt
 
 @app.route('/')
 def login():
@@ -16,11 +17,11 @@ def authenticate():
     super_admin = 'superadministrador'
     senha_super_admin = 'Prodam'
 
-    validacao_ad = validar_AD(login, passw)
 
     if login == super_admin and passw == senha_super_admin:
         return redirect(url_for('cadastro_admin'))
     else:
+        validacao_ad = validar_AD(login, passw)
         if validacao_ad:
             session['logged_user'] = login
             session.permanent = True
@@ -39,15 +40,17 @@ def logout():
 #--------------------------------------------------------------------------------------------------------------------
 @app.route('/cadastro-admin')
 def cadastro_admin():
-    log_as_admin()
     return render_template('cadastroAdmin.html', titulo="Cadastro de administrador do sistema")
 
 @app.route('/admin', methods=['POST',])
 def admin():
     form_data = request.form
+    dados_admin = dict(request.form)
+    dados_admin['senha'] = Crypt.encrypt(form_data['senha']).decode('utf-8')
     with open('administrador.json', 'w') as f:
-        json.dump(form_data, f)
+        json.dump(dados_admin, f)
     flash('Administrador cadastrado com sucesso!')
+    log_as_admin()
 
     return redirect(url_for('index'))
 
