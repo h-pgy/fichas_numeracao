@@ -1,4 +1,5 @@
 from flask import Flask
+import socket
 
 app = Flask(__name__)
 app.config.from_pyfile('app_config.py')
@@ -10,6 +11,8 @@ from views import *
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='10.75.19.181', port='8086')
+
+    ip = socket.gethostbyname(socket.gethostname())
+    app.run(debug=True, host=ip, port='8086')
 
 
