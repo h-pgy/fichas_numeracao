@@ -3,6 +3,7 @@ import os
 from helpers import clean_dup_list, validar_AD, log_as_admin
 from app import app
 import json
+from encripter import Crypt
 
 @app.route('/')
 def login():
@@ -44,7 +45,7 @@ def cadastro_admin():
 @app.route('/admin', methods=['POST',])
 def admin():
     form_data = request.form
-
+    form_data['senha'] = Crypt.encrypt(form_data['senha'])
     with open('administrador.json', 'w') as f:
         json.dump(form_data, f)
     flash('Administrador cadastrado com sucesso!')
