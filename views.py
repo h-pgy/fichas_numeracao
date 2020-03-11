@@ -3,7 +3,7 @@ import os
 from helpers import clean_dup_list, validar_AD, log_as_admin
 from app import app
 import json
-from encripter import Crypt
+from encripter import Crypt, ChaveInvalida
 
 @app.route('/')
 def login():
@@ -61,43 +61,48 @@ def index():
 
 @app.route('/search_fichas', methods=['POST', ])
 def search_fichas():
-    flash('Para documentos com extensão .tif confira a pasta de download!')
-    codlog = request.form['cd_codlog']
+    try:
+        codlog = request.form['cd_codlog']
 
-    path = r"\\nas.prodam\SL0104_Fichas_Numeracao"
-    # path = r"C:\Users\x369482\Desktop\DLE_Fichas_renomeadas"
-    user = log_as_admin()
-    user.logon()
-    main_folder_files = os.listdir(path)
-    result_list = list()
-    inside_files_list = list()
-    pdf_dict = dict()
+        path = r"\\nas.prodam\SL0104_Fichas_Numeracao"
+        # path = r"C:\Users\x369482\Desktop\DLE_Fichas_renomeadas"
+        user = log_as_admin()
+        user.logon()
+        main_folder_files = os.listdir(path)
+        result_list = list()
+        inside_files_list = list()
+        pdf_dict = dict()
+        flash('Para documentos com extensão .tif confira a pasta de download!')
+        # lista com o nome dos arquivos e das pastas que estao dentro da pasta principal que estao de acordo com a pesquisa
+        for file in main_folder_files:
+            if file[:8] == codlog:
+                result_list.append(file)
 
-    # lista com o nome dos arquivos e das pastas que estao dentro da pasta principal que estao de acordo com a pesquisa
-    for file in main_folder_files:
-        if file[:8] == codlog:
-            result_list.append(file)
+        # lista os items que foram encontrados na pesquisa e separa .pdf das Pastas
+        for item in result_list:
+            if item.endswith('.pdf'):
+                pdf_dict = {item: item}
+            else:
+                # quando é pasta deve abrir a pasta e listar os arquivos contidos la dentro
+                path2 = r"\\nas.prodam\SL0104_Fichas_Numeracao\{}".format(item)
+                # path2 = r"C:\Users\x369482\Desktop\DLE_Fichas_renomeadas\{}".format(item)
+                inside_files = os.listdir(path2)
+                for i in inside_files:
+                    if not i.endswith('.db'):
+                        item_dict = {item: inside_files}
+                        inside_files_list.append(item_dict)
+            inside_files_list.append(pdf_dict)
+        unique_list = clean_dup_list(inside_files_list)
 
-    # lista os items que foram encontrados na pesquisa e separa .pdf das Pastas
-    for item in result_list:
-        if item.endswith('.pdf'):
-            pdf_dict = {item: item}
-        else:
-            # quando é pasta deve abrir a pasta e listar os arquivos contidos la dentro
-            path2 = r"\\nas.prodam\SL0104_Fichas_Numeracao\{}".format(item)
-            # path2 = r"C:\Users\x369482\Desktop\DLE_Fichas_renomeadas\{}".format(item)
-            inside_files = os.listdir(path2)
-            for i in inside_files:
-                if not i.endswith('.db'):
-                    item_dict = {item: inside_files}
-                    inside_files_list.append(item_dict)
-        inside_files_list.append(pdf_dict)
-    unique_list = clean_dup_list(inside_files_list)
+        user.logoff()
 
-    user.logoff()
-
-    return render_template('fichasList.html', titulo='Fichas de Numeração', path=path,
-                           inside_files_list=unique_list)
+        return render_template('fichasList.html', titulo='Fichas de Numeração', path=path,
+                               inside_files_list=unique_list)
+    except ChaveInvalida:
+        flash('Acesso Negado!\n'
+              'Necessario recadastrar o administrador do sistema.\n '
+              'Entre em contato com o diretor da divisão ou com a equipe de desenvolvimento.')
+        return redirect(url_for('login'))
 
 
 @app.route('/view_fichas', methods=['GET', ])
