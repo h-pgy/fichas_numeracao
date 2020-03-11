@@ -1,5 +1,5 @@
 import json
-import requests
+from consumo_ldap import LDAP_SERVICE, validar_ad
 from impersonator import Impersonate
 from encripter import Crypt
 
@@ -12,14 +12,8 @@ def clean_dup_list(list_dup_items):
     return unique_list
 
 def validar_AD(user, passw):
-    url = 'http://10.75.18.36:8083/conexao_ldap/?user={user}&passw={passw}'.format(user=user, passw=passw)
 
-    s = requests.Session()
-    s.trust_env = False # obrigando a funcionar dentro da rede da PMSP
-    with s.get(url) as f:
-        json_resp = f.text
-
-    return json.loads(json_resp)
+    return validar_ad(user, passw, LDAP_SERVICE['ip'], LDAP_SERVICE['porta'])
 
 def log_as_admin(admin_file = 'administrador.json'):
 
