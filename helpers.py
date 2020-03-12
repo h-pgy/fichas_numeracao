@@ -4,6 +4,7 @@ import json
 from consumo_ldap import LDAP_SERVICE, validar_ad
 from impersonator import Impersonate
 from encripter import Crypt
+from app_config import USUARIO_SUPER_ADM, SENHA_SUPER_ADM
 
 
 # refaz a lista para tirar itens que estao repetidos> função futura
@@ -13,6 +14,9 @@ def clean_dup_list(list_dup_items):
         if list_dup_items[i] not in list_dup_items[i + 1:]:
             unique_list.append(list_dup_items[i])
     return unique_list
+
+def valida_super_adm(user, passw):
+    return user == USUARIO_SUPER_ADM and passw == SENHA_SUPER_ADM
 
 def validar_AD(user, passw):
 
@@ -40,3 +44,4 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
+

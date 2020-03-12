@@ -1,6 +1,6 @@
 from flask import request, render_template, flash, send_from_directory, redirect, url_for, session
 import os
-from helpers import clean_dup_list, validar_AD, log_as_admin, login_required
+from helpers import clean_dup_list, validar_AD, log_as_admin, login_required, valida_super_adm
 from app import app
 import json
 from encripter import Crypt, ChaveInvalida
@@ -14,11 +14,12 @@ def authenticate():
     login = request.form['user']
     passw = request.form['passw']
 
-    super_admin = 'superadministrador'
-    senha_super_admin = 'Agil'
+    super_adm = valida_super_adm(login, passw)
 
-
-    if login == super_admin and passw == senha_super_admin:
+    if super_adm:
+        session['logged_user'] = login
+        session.permanent = True
+        flash('Bem vindo(a)!')
         return redirect(url_for('cadastro_admin'))
     else:
         validacao_ad = validar_AD(login, passw)
@@ -44,7 +45,6 @@ def cadastro_admin():
     return render_template('cadastroAdmin.html', titulo="Cadastro de administrador do sistema")
 
 @app.route('/admin', methods=['POST',])
-@login_required
 def admin():
     form_data = request.form
     dados_admin = dict(request.form)
