@@ -1,6 +1,6 @@
 from flask import request, render_template, flash, send_from_directory, redirect, url_for, session
 import os
-from helpers import clean_dup_list, validar_AD, log_as_admin
+from helpers import clean_dup_list, validar_AD, log_as_admin, login_required
 from app import app
 import json
 from encripter import Crypt, ChaveInvalida
@@ -39,10 +39,12 @@ def logout():
 
 #--------------------------------------------------------------------------------------------------------------------
 @app.route('/cadastro-admin')
+@login_required
 def cadastro_admin():
     return render_template('cadastroAdmin.html', titulo="Cadastro de administrador do sistema")
 
 @app.route('/admin', methods=['POST',])
+@login_required
 def admin():
     form_data = request.form
     dados_admin = dict(request.form)
@@ -54,16 +56,24 @@ def admin():
 
     return redirect(url_for('index'))
 
+@app.route('/exibe-admin')
+@login_required
+def exibe_admin(admin_file = 'administrador.json'):
+    with open(admin_file) as f:
+        admin = json.load(f)
+    return render_template('exibeAdmin.html', titulo='Administrador do sistema', admin=admin)
+
 # -------------------------------------------------------------------------------------------------------------------
 @app.route('/fichas')
+@login_required
 def index():
     return render_template('fichasSearch.html', titulo='Fichas de Numeração')
 
 @app.route('/search_fichas', methods=['POST', ])
+@login_required
 def search_fichas():
     try:
         codlog = request.form['cd_codlog']
-
         path = r"\\nas.prodam\SL0104_Fichas_Numeracao"
         # path = r"C:\Users\x369482\Desktop\DLE_Fichas_renomeadas"
         user = log_as_admin()
@@ -106,6 +116,7 @@ def search_fichas():
 
 
 @app.route('/view_fichas', methods=['GET', ])
+@login_required
 def view_fichas():
     path = request.args['path']
     file = request.args['file']

@@ -3,7 +3,7 @@
         <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
            href="#"
            id="pagesDropdown" role="button">
-            <i class="fas fa-fw fa-folder"></i>
+            <i class="nav-item"></i>
             <span>Fichas Numeração</span>
         </a>
         <div aria-labelledby="pagesDropdown" class="dropdown-menu"
@@ -12,5 +12,10 @@
             <a class="dropdown-item" href="{{url_for('index')}}">Busca de fichas</a>
             <div class="dropdown-divider"></div>
         </div>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{url_for('exibe_admin')}}">
+            <span>Administrador do sistema</span>
+        </a>
     </li>
 </ul>
