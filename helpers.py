@@ -1,7 +1,10 @@
+import functools
+from flask import session, redirect, url_for
 import json
 from consumo_ldap import LDAP_SERVICE, validar_ad
 from impersonator import Impersonate
 from encripter import Crypt
+
 
 # refaz a lista para tirar itens que estao repetidos> função futura
 def clean_dup_list(list_dup_items):
@@ -28,3 +31,12 @@ def log_as_admin(admin_file = 'administrador.json'):
     user = Impersonate(usuario, senha)
 
     return user
+
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if not 'logged_user' in session.keys():
+            return redirect(url_for('login'))
+        return view(**kwargs)
+
+    return wrapped_view
