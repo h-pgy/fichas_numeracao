@@ -127,3 +127,7 @@ def view_fichas():
         return send_from_directory(path, file)
 
     return send_from_directory(path, file)
+
+@app.before_request
+def set_domain_session():
+    session['domain'] = request.headers['Host']
