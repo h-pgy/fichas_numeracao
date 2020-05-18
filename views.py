@@ -106,8 +106,9 @@ def view_fichas():
     file = request.args['file']
     folder = request.args['folder']
 
-    if file.endswith('.tif'):
+    if file.endswith('.tif') or file.endswith('.pdf'):
         path = path + r'/' + folder
+        print(path)
         return send_from_directory(path, file)
 
     return send_from_directory(path, file)
