@@ -1,0 +1,56 @@
+{% extends "template.html" %}
+{% block conteudo %}
+
+<div class="container col-xl-7" style="max-width: 70%;">
+    <div class="card-1 mb-3 ">
+        <div class="card-header">
+            {{ titulo|title }}
+        </div>
+        <div class="card-body">
+            <div class="tab-content" id="myTabContent">
+                <div aria-labelledby="home-tab" class="tab-pane fade show active" id="home" role="tabpanel">
+                    <fieldset>
+                        <fieldset>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-xl-4">
+                                        <label for="nome">Nome</label>
+                                        <input class="form-control" id="nome" name="nome" value="{{admin['nome']}}" disabled>
+                                    </div>
+                                    <div class="col-xl-3">
+                                        <label for="telefone">Telefone de contato</label>
+                                        <input class="form-control" id="telefone" name="telefone" value="{{admin['telefone']}}" disabled>
+                                    </div>
+                                    <div class="col-xl-4">
+                                        <label for="cargo">Cargo/Função</label>
+                                        <input class="form-control" id="cargo" name="cargo" value="{{admin['cargo']}}" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-xl-4">
+                                        <label for="email">E-mail</label>
+                                        <input class="form-control" id="email" name="email" value="{{admin['email']}}" disabled>
+                                    </div>
+                                    <div class="col-xl-2">
+                                        <label for="rf">RF</label>
+                                        <input class="form-control" id="rf" name="rf" value="{{admin['rf']}}" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="col-xl-auto form-row ">
+                            <div class="small text-muted">
+                                <a class="btn btn-primary " href="{{url_for('index')}}">Voltar</a>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer small text-muted"></div>
+    </div>
+</div>
+
+{% endblock %}
