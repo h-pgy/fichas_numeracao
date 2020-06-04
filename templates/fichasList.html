@@ -32,40 +32,18 @@
                                 </tr>
                                 </tfoot>
                                 <tbody class="bg-white">
-                                {% if inside_files_list %}
-                                {% for y in inside_files_list %}
-                                {% for k,v in y.items() %}
+                                {% if file_list %}
+                                {% for ficha in file_list %}
                                 <tr class="odd" role="row">
+                                    <td class="sorting_1">{{ ficha.filename }}</td>
 
-                                    <td class="sorting_1">{{ k }}</td>
-                                    {% if k.endswith('.pdf') %}
                                     <td>
-                                        <a href="{{url_for('view_fichas', path=path, file=k, folder=k )}}"
-                                           target="_blank" title="{{k}}">
-                                            {{k}}
+                                        <a href="{{url_for('view_fichas', path = ficha.path, file = ficha.filename)}}"
+                                           target="_blank" title="{{ficha.filename}}">
+                                            {{ficha.filename}}
                                         </a>
                                     </td>
-                                    {% else %}
-                                    <td>
-                                        {% for m in v %}
-                                        {% if not m.endswith('.db') %}
-
-                                        <a href="{{url_for('view_fichas', path=path, file=m , folder=k )}}"
-                                           target="_blank" title="{{m}}">
-                                            {{m}}
-                                        </a>
-                                        <br/>
-                                        {% endif %}
-                                        {% endfor %}
-                                    </td>
-
-
-                                    {% endif %}
-<!--                                    <td>-->
-<!--                                        <input type="checkbox">-->
-<!--                                    <td>-->
                                 </tr>
-                                {% endfor %}
                                 {% endfor %}
                                 {% endif %}
                                 </tbody>

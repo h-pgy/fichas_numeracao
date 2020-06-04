@@ -1,9 +1,10 @@
 from flask import request, render_template, flash, send_from_directory, redirect, url_for, session
 import os
-from helpers import clean_dup_list, validar_AD, log_as_admin, login_required, valida_super_adm
+from helpers import validar_AD, log_as_admin, login_required, valida_super_adm
 from app import app
 import json
 from encripter import Crypt, ChaveInvalida
+from models import Ficha
 
 @app.route('/')
 def login():
@@ -75,39 +76,24 @@ def search_fichas():
     try:
         codlog = request.form['cd_codlog']
         path = r"\\nas.prodam\SL0104_Fichas_Numeracao"
-        # path = r"C:\Users\x369482\Desktop\DLE_Fichas_renomeadas"
         user = log_as_admin()
         user.logon()
-        main_folder_files = os.listdir(path)
-        result_list = list()
-        inside_files_list = list()
-        pdf_dict = dict()
-        flash('Para documentos com extensão .tif confira a pasta de download!')
-        # lista com o nome dos arquivos e das pastas que estao dentro da pasta principal que estao de acordo com a pesquisa
-        for file in main_folder_files:
-            if file[:8] == codlog:
-                result_list.append(file)
+        walk = os.walk(path)
+        result = []
+        for root, dirs, files in walk:
 
-        # lista os items que foram encontrados na pesquisa e separa .pdf das Pastas
-        for item in result_list:
-            if item.endswith('.pdf'):
-                pdf_dict = {item: item}
-            else:
-                # quando é pasta deve abrir a pasta e listar os arquivos contidos la dentro
-                path2 = r"\\nas.prodam\SL0104_Fichas_Numeracao\{}".format(item)
-                # path2 = r"C:\Users\x369482\Desktop\DLE_Fichas_renomeadas\{}".format(item)
-                inside_files = os.listdir(path2)
-                for i in inside_files:
-                    if not i.endswith('.db'):
-                        item_dict = {item: inside_files}
-                        inside_files_list.append(item_dict)
-            inside_files_list.append(pdf_dict)
-        unique_list = clean_dup_list(inside_files_list)
+            for file in files:
+                if file.endswith('.pdf') or file.endswith('.tif'):
+                    if file[:8] == codlog:
+                        ficha = Ficha(path = root, filename=file)
+                        result.append(ficha)
+
+        flash('Para documentos com extensão .tif confira a pasta de download!')
 
         user.logoff()
 
         return render_template('fichasList.html', titulo='Fichas de Numeração', path=path,
-                               inside_files_list=unique_list)
+                               file_list=result)
     except ChaveInvalida:
         flash('Acesso Negado!\n'
               'Necessario recadastrar o administrador do sistema.\n '
@@ -120,12 +106,6 @@ def search_fichas():
 def view_fichas():
     path = request.args['path']
     file = request.args['file']
-    folder = request.args['folder']
-
-    if file.endswith('.tif') or file.endswith('.pdf'):
-        path = path + r'/' + folder
-        print(path)
-        return send_from_directory(path, file)
 
     return send_from_directory(path, file)
 

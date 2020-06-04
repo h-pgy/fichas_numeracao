@@ -1,8 +1,8 @@
 import requests
 
 LDAP_SERVICE  = {
-    'ip' : 'COLOCAR_O_IP',
-    'porta' : 'COLOCAR_A_PORTA'
+    'ip' : '10.75.17.150',
+    'porta' : '8083'
 }
 
 
